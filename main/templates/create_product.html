@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Product - Fasilcats FC Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #dc2626);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .form-check-input {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #1e40af;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .form-actions {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #1e40af;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Add New Product</h1>
+        <p>Tambahkan produk baru ke toko Fasilcats FC</p>
+    </div>
+
+    <div class="container">
+        <a href="{% url 'main:show_main' %}" class="back-link">← Kembali ke Halaman Utama</a>
+        
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                    {{ form.price }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                    {{ form.description }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.thumbnail.id_for_label }}">{{ form.thumbnail.label }}</label>
+                    {{ form.thumbnail }}
+                    <small style="color: #6c757d; display: block; margin-top: 0.25rem;">
+                        Masukkan URL gambar produk (contoh: https://example.com/image.jpg)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                    {{ form.category }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.brand.id_for_label }}">{{ form.brand.label }}</label>
+                    {{ form.brand }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.stock.id_for_label }}">{{ form.stock.label }}</label>
+                    {{ form.stock }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.size.id_for_label }}">{{ form.size.label }}</label>
+                    {{ form.size }}
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        {{ form.is_featured }}
+                        <label for="{{ form.is_featured.id_for_label }}">{{ form.is_featured.label }}</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Simpan Produk</button>
+                    <a href="{% url 'main:show_main' %}" class="btn btn-secondary">Batal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

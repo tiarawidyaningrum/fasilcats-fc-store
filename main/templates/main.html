@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #dc2626);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #1e40af;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            border-bottom: 3px solid #dc2626;
+            padding-bottom: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .info-card strong {
+            color: #1e40af;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc2626;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-category {
+            background: #e9ecef;
+            color: #6c757d;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-add {
+            background-color: #dc2626;
+            color: white;
+            font-size: 1.1rem;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn-add:hover {
+            background-color: #b91c1c;
+            transform: translateY(-2px);
+            
+        }
+        .footer {
+            background: #1e40af;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .identity {
+            font-style: italic;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-add {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>{{ app_name }}</h1>
+        <p>{{ description }}</p>
+        <div class="tagline">{{ tagline }}</div>
+    </div>
+
+    <div class="container">
+        <!-- About Section -->
+        <div class="section">
+            <h2>Tentang Aplikasi</h2>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+                {{ app_name }} adalah toko official Fasilcats FC yang menyediakan berbagai merchandise sepak bola berkualitas tinggi.
+            </p>
+            <p style="font-size: 1.1rem; line-height: 1.8; margin-top: 1rem;">
+                Selamat berbelanja ^^
+            </p>
+        </div>
+
+        <!-- Menampilkan Products -->
+        <div class="section">
+            <h2>Our Products</h2>
+
+            <div style="margin-bottom: 1.5rem;">
+                <a href="{% url 'main:create_product' %}" class="btn btn-add">
+                    ➕ Tambah Produk Baru
+                </a>
+            </div>
+            
+            {% if products %}
+                <div class="products-grid">
+                    {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-image" style="background-image: url('{% static product.thumbnail %}')">
+                            {% if product.is_featured %}
+                            <div class="featured-badge">UNGGULAN</div>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">{{ product.name }}</div>
+                            <div class="product-description">{{ product.description }}</div>
+                            <div class="product-price">Rp {{ product.price|floatformat:0 }}</div>
+                            <div class="product-category">{{ product.category }}</div>
+
+                            <div style="margin-top: 1rem;">
+                                <a href="{% url 'main:product_detail' product.pk %}" class="btn btn-detail">
+                                    Lihat Detail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif%}    
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 {{ app_name }}. Semua hak cipta dilindungi undang-undang.</p>
+        <p class="identity">{{ identity }}</p>
+    </div>
+</body>
+</html>
