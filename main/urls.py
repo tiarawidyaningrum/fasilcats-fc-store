@@ -10,6 +10,11 @@ urlpatterns = [
     path('create-product/', views.create_product, name='create_product'),
     path('product/<int:id>/', views.product_detail, name='product_detail'),
     
+    # routing untuk authentication
+    path('register/', views.register, name='register'),
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+    
     # routing 4 fungsi data delivery
     path('xml/', views.show_xml, name='show_xml'),
     path('json/', views.show_json, name='show_json'),

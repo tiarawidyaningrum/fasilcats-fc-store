@@ -225,6 +225,14 @@
         <div class="tagline">{{ tagline }}</div>
     </div>
 
+    <div class="user-info" style="background: white; padding: 1rem; margin-bottom: 2rem; border-radius: 10px;">
+        <div class="container">
+            <p><strong>Welcome, {{ name }}!</strong></p>
+            <p>Last login: {{ last_login }}</p>
+            <a href="{% url 'main:logout' %}" style="background: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 5px;">Logout</a>
+        </div>
+    </div>
+
     <div class="container">
         <!-- About Section -->
         <div class="section">

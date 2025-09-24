@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Fasilcats FC Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e40af, #dc2626);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            color: #1e40af;
+            margin-bottom: 2rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #1e40af;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #1e3a8a;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .register-link a {
+            color: #1e40af;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <table>
+                {{ form.as_table }}
+                <tr>
+                    <td></td>
+                    <td><input class="btn" type="submit" value="Login" /></td>
+                </tr>
+            </table>
+        </form>
+
+        <div class="register-link">
+            Don't have an account yet? <a href="{% url 'main:register' %}">Register Now</a>
+        </div>
+    </div>
+</body>
+</html>
