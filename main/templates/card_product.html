@@ -1,0 +1,89 @@
+{% load static %}
+<div class="bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
+  <!-- Product Image -->
+  <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-100 to-red-100 relative overflow-hidden">
+    {% if product.thumbnail %}
+      <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+    {% else %}
+      <div class="w-full h-48 flex items-center justify-center bg-gray-200">
+        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+    {% endif %}
+    
+    <!-- Featured Badge -->
+    {% if product.is_featured %}
+      <div class="absolute top-3 right-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-400 text-yellow-900">
+          ⭐ FEATURED
+        </span>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Product Info -->
+  <div class="p-5">
+    <!-- Category -->
+    <div class="mb-2">
+      <span class="inline-block px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-100 rounded-full">
+        {{ product.category }}
+      </span>
+    </div>
+
+    <!-- Product Name -->
+    <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem]">
+      {{ product.name }}
+    </h3>
+
+    <!-- Brand & Size -->
+    <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+      {% if product.brand %}
+        <span class="font-medium">{{ product.brand }}</span>
+      {% endif %}
+      {% if product.size %}
+        <span>• {{ product.size }}</span>
+      {% endif %}
+    </div>
+
+    <!-- Description -->
+    <p class="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[2.5rem]">
+      {{ product.description|truncatewords:15 }}
+    </p>
+
+    <!-- Price & Stock -->
+    <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+      <div>
+        <p class="text-2xl font-bold text-red-600">
+          Rp {{ product.price|floatformat:0 }}
+        </p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs text-gray-500">Stok</p>
+        <p class="text-sm font-semibold {% if product.stock > 10 %}text-green-600{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
+          {{ product.stock }} unit
+        </p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center gap-2">
+      <a href="{% url 'main:product_detail' product.id %}" 
+         class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+        Detail
+      </a>
+      
+      {% if user.is_authenticated and product.user == user %}
+        <a href="{% url 'main:edit_product' product.id %}" 
+           class="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+          Edit
+        </a>
+        <a href="{% url 'main:delete_product' product.id %}" 
+           onclick="return confirm('Yakin ingin menghapus produk ini?')"
+           class="flex-1 text-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+          Delete
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
