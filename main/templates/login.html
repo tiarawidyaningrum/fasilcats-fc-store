@@ -13,38 +13,16 @@
         <p class="text-gray-600">Welcome back to Fasilcats FC Store</p>
       </div>
 
-      <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
+      <div id="ajax-error-display" class="mb-6 hidden">
         </div>
-      {% endif %}
-
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-6">
+      
+      <form id="loginForm" class="space-y-6">
         {% csrf_token %}
         
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+          <label for="id_username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
           <input 
-            id="username" 
+            id="id_username" 
             name="username" 
             type="text" 
             required 
@@ -53,9 +31,9 @@
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <label for="id_password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
           <input 
-            id="password" 
+            id="id_password" 
             name="password" 
             type="password" 
             required 
@@ -65,31 +43,11 @@
 
         <button 
           type="submit" 
+          id="loginButton"
           class="w-full bg-red-600 text-white font-medium py-3 px-4 rounded-md hover:bg-red-700 transition-colors">
           Sign In
         </button>
       </form>
-
-      <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded-md text-sm border
-                {% if message.tags == 'success' %}
-                  bg-green-50 border-green-200 text-green-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
 
       <div class="mt-6 text-center pt-6 border-t border-gray-200">
         <p class="text-gray-500 text-sm">
@@ -102,4 +60,52 @@
     </div>
   </div>
 </div>
+
+<script>
+async function handleLogin(event) {
+    event.preventDefault();
+    const form = document.getElementById('loginForm');
+    const button = document.getElementById('loginButton');
+    const errorDisplay = document.getElementById('ajax-error-display');
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = 'Signing in...';
+    errorDisplay.classList.add('hidden');
+    errorDisplay.innerHTML = '';
+
+    try {
+        const response = await fetch("{% url 'main:login_ajax' %}", {
+            method: 'POST',
+            body: new FormData(form),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showToast('Login Berhasil!', `Selamat datang, ${data.username}.`, 'success');
+            setTimeout(() => {
+                window.location.href = "{% url 'main:show_main' %}";
+            }, 500);
+        } else {
+            let errorMessage = data.message || 'Login gagal. Periksa kembali username dan password Anda.';
+            
+            errorDisplay.innerHTML = `<div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">${errorMessage}</div>`;
+            errorDisplay.classList.remove('hidden');
+            showToast('Login Gagal', errorMessage, 'error');
+        }
+
+    } catch (error) {
+        errorDisplay.innerHTML = `<div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">Terjadi kesalahan koneksi.</div>`;
+        errorDisplay.classList.remove('hidden');
+        showToast('Login Gagal', 'Kesalahan jaringan. Silakan coba lagi.', 'error');
+        console.error('AJAX Login Error:', error);
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+}
+
+document.getElementById('loginForm').addEventListener('submit', handleLogin);
+</script>
 {% endblock content %}

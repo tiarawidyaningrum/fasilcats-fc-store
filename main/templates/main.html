@@ -29,55 +29,78 @@
           <p class="text-lg font-semibold text-gray-900">{{ name }}</p>
           <p class="text-sm text-gray-500">Last login: {{ last_login }}</p>
         </div>
-        <a href="{% url 'main:logout' %}" 
+        <button onclick="handleLogout()" 
            class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
           Logout
-        </a>
+        </button>
       </div>
     </div>
     {% endif %}
 
-    <!-- Products Section -->
-    <div class="mb-6 flex items-center justify-between">
+    <!-- Action Buttons -->
+    <div class="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <h2 class="text-2xl font-bold text-gray-900">Our Products</h2>
-      <a href="{% url 'main:create_product' %}" 
-         class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors inline-flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        Add New Product
-      </a>
-    </div>
-
-    <!-- Product Grid or Empty State -->
-    {% if not products %}
-      <!-- Empty State -->
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <div class="w-64 h-64 mx-auto mb-6">
-          <img src="{% static 'images/no-product.png' %}" 
-               alt="No products available" 
-               class="w-full h-full object-contain opacity-50">
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">Belum Ada Produk</h3>
-        <p class="text-gray-500 mb-6 max-w-md mx-auto">
-          Saat ini belum ada produk yang terdaftar di toko. Yuk, tambahkan produk pertamamu sekarang!
-        </p>
-        <a href="{% url 'main:create_product' %}" 
-           class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-md font-medium transition-colors">
+      <div class="flex gap-3">
+        <button onclick="refreshProducts()" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors inline-flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Refresh
+        </button>
+        <button onclick="showModal()" 
+           class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors inline-flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
-          Tambah Produk Pertama
-        </a>
+          Add New Product
+        </button>
       </div>
-    {% else %}
-      <!-- Product Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {% for product in products %}
-          {% include 'card_product.html' with product=product %}
-        {% endfor %}
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <svg class="animate-spin h-12 w-12 text-red-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 text-lg font-medium">Loading products...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="bg-white rounded-lg border border-red-200 p-12 text-center hidden">
+      <div class="text-red-500 text-6xl mb-4">⚠️</div>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Failed to Load Products</h3>
+      <p class="text-gray-600 mb-6">There was an error loading the products. Please try again.</p>
+      <button onclick="refreshProducts()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors">
+        Try Again
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <div class="w-64 h-64 mx-auto mb-6">
+        <img src="{% static 'images/no-product.png' %}" 
+             alt="No products available" 
+             class="w-full h-full object-contain opacity-50">
       </div>
-    {% endif %}
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Belum Ada Produk</h3>
+      <p class="text-gray-500 mb-6 max-w-md mx-auto">
+        Saat ini belum ada produk yang terdaftar di toko. Yuk, tambahkan produk pertamamu sekarang!
+      </p>
+      <button onclick="showModal()" 
+         class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-md font-medium transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Tambah Produk Pertama
+      </button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden">
+      <!-- Products will be inserted here by JavaScript -->
+    </div>
 
   </div>
 </div>
@@ -91,4 +114,248 @@
     </div>
   </div>
 </footer>
+
+<script>
+// Configuration
+const PRODUCTS_API = "{% url 'main:show_json' %}";
+const ADD_PRODUCT_URL = "{% url 'main:add_product_ajax' %}";
+const EDIT_PRODUCT_URL_TEMPLATE = "{% url 'main:edit_product_ajax' 0 %}".replace('/0/', '/{id}/');
+const DELETE_PRODUCT_URL_TEMPLATE = "{% url 'main:delete_product_ajax' 0 %}".replace('/0/', '/{id}/');
+const DETAIL_URL_TEMPLATE = "{% url 'main:product_detail' 0 %}".replace('/0/', '/{id}/');
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// DOM Elements
+const loadingState = document.getElementById('loading-state');
+const errorState = document.getElementById('error-state');
+const emptyState = document.getElementById('empty-state');
+const productGrid = document.getElementById('product-grid');
+
+// Show/hide states
+function showState(state) {
+    loadingState.classList.toggle('hidden', state !== 'loading');
+    errorState.classList.toggle('hidden', state !== 'error');
+    emptyState.classList.toggle('hidden', state !== 'empty');
+    productGrid.classList.toggle('hidden', state !== 'products');
+}
+
+// Create product card element
+function createProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden';
+    
+    const detailUrl = DETAIL_URL_TEMPLATE.replace('{id}', product.id);
+    
+    // Sanitize data
+    const name = DOMPurify.sanitize(product.name);
+    const description = DOMPurify.sanitize(product.description);
+    const category = DOMPurify.sanitize(product.category);
+    const brand = product.brand ? DOMPurify.sanitize(product.brand) : '';
+    const size = product.size ? DOMPurify.sanitize(product.size) : '';
+    const thumbnail = DOMPurify.sanitize(product.thumbnail);
+    const price = DOMPurify.sanitize(product.price.toString());
+    const stock = DOMPurify.sanitize(product.stock.toString());
+    
+    const thumbnailHtml = thumbnail 
+        ? `<img src="${thumbnail}" alt="${name}" class="w-full h-48 object-cover">` 
+        : `<div class="w-full h-48 flex items-center justify-center bg-gray-200">
+            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>`;
+    
+    const featuredBadge = product.is_featured 
+        ? `<div class="absolute top-3 right-3">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-400 text-yellow-900">
+              ⭐ FEATURED
+            </span>
+          </div>` 
+        : '';
+    
+    const brandSizeHtml = (brand || size) 
+        ? `<div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+            ${brand ? `<span class="font-medium">${brand}</span>` : ''}
+            ${brand && size ? '<span>•</span>' : ''}
+            ${size ? `<span>${size}</span>` : ''}
+          </div>` 
+        : '';
+    
+    let stockClass = 'text-red-600';
+    if (stock > 10) stockClass = 'text-green-600';
+    else if (stock > 0) stockClass = 'text-yellow-600';
+    
+    const actionButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)
+        ? `<div class="flex items-center gap-2">
+            <a href="${detailUrl}" 
+               class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+              Detail
+            </a>
+            <button onclick="editProduct(${product.id})" 
+               class="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+              Edit
+            </button>
+            <button onclick="showDeleteModal(${product.id})" 
+               class="flex-1 text-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+              Delete
+            </button>
+          </div>`
+        : `<a href="${detailUrl}" 
+             class="block text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+            Detail
+          </a>`;
+    
+    card.innerHTML = `
+        <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-100 to-red-100 relative overflow-hidden">
+          ${thumbnailHtml}
+          ${featuredBadge}
+        </div>
+        <div class="p-5">
+          <div class="mb-2">
+            <span class="inline-block px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-100 rounded-full">
+              ${category}
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem]">
+            ${name}
+          </h3>
+          ${brandSizeHtml}
+          <p class="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[2.5rem]">
+            ${description}
+          </p>
+          <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+            <div>
+              <p class="text-2xl font-bold text-red-600">
+                Rp ${parseInt(price).toLocaleString('id-ID')}
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-gray-500">Stok</p>
+              <p class="text-sm font-semibold ${stockClass}">
+                ${stock} unit
+              </p>
+            </div>
+          </div>
+          ${actionButtons}
+        </div>
+    `;
+    
+    return card;
+}
+
+// Fetch and display products
+async function fetchProducts() {
+    try {
+        showState('loading');
+        
+        const response = await fetch(PRODUCTS_API, {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch products');
+        }
+
+        const products = await response.json();
+        
+        if (products.length === 0) {
+            showState('empty');
+        } else {
+            productGrid.innerHTML = '';
+            products.forEach(product => {
+                const card = createProductCard(product);
+                productGrid.appendChild(card);
+            });
+            showState('products');
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        showState('error');
+    }
+}
+
+// Save product (create or update)
+async function saveProduct() {
+    const productId = document.getElementById('productId').value;
+    const formData = new FormData(document.getElementById('productForm'));
+    
+    const url = productId 
+        ? EDIT_PRODUCT_URL_TEMPLATE.replace('{id}', productId)
+        : ADD_PRODUCT_URL;
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            hideModal();
+            await fetchProducts();
+            const message = productId ? 'Product updated successfully!' : 'Product added successfully!';
+            showToast('Success', message, 'success');
+        } else {
+            throw new Error('Failed to save product');
+        }
+    } catch (error) {
+        console.error('Error saving product:', error);
+        showToast('Error', 'Failed to save product. Please try again.', 'error');
+    }
+}
+
+// Edit product
+async function editProduct(productId) {
+    try {
+        const response = await fetch(`{% url 'main:show_json_by_id' 0 %}`.replace('/0/', `/${productId}/`), {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch product');
+        }
+
+        const product = await response.json();
+        showModal(true, product);
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        showToast('Error', 'Failed to load product data.', 'error');
+    }
+}
+
+// Delete product
+async function deleteProduct(productId) {
+    try {
+        const url = DELETE_PRODUCT_URL_TEMPLATE.replace('{id}', productId);
+        const response = await fetch(url, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            hideDeleteModal();
+            await fetchProducts();
+            showToast('Success', 'Product deleted successfully!', 'success');
+        } else {
+            throw new Error('Failed to delete product');
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showToast('Error', 'Failed to delete product. Please try again.', 'error');
+    }
+}
+
+// Refresh products
+function refreshProducts() {
+    fetchProducts();
+    showToast('Refreshing', 'Loading latest products...', 'info', 2000);
+}
+
+// Handle logout
+function handleLogout() {
+    showToast('Logging out', 'See you soon!', 'info', 1500);
+    setTimeout(() => {
+        window.location.href = "{% url 'main:logout' %}";
+    }, 1500);
+}
+
+// Initialize page
+fetchProducts();
+</script>
 {% endblock content %}

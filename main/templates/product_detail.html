@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block meta %}
-<title>{{ product.name }} - Fasilcats FC Store</title>
+<title>Product Detail - Fasilcats FC Store</title>
 {% endblock meta %}
 
 {% block content %}
@@ -20,105 +20,269 @@
             </a>
         </div>
         
+        <!-- Loading State -->
+        <div id="loading-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <svg class="animate-spin h-12 w-12 text-red-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 text-lg font-medium">Loading product detail...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="bg-white rounded-lg border border-red-200 p-12 text-center hidden">
+            <div class="text-red-500 text-6xl mb-4">⚠️</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Failed to Load Product</h3>
+            <p class="text-gray-600 mb-6">There was an error loading the product details. Please try again.</p>
+            <a href="{% url 'main:show_main' %}" class="inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors">
+                Back to Products
+            </a>
+        </div>
+        
         <!-- Product Detail Card -->
-        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-lg">
+        <article id="product-content" class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-lg hidden">
             
             <!-- Product Image -->
-            <div class="w-full h-96 bg-gradient-to-br from-blue-100 to-red-100 relative">
-                {% if product.thumbnail %}
-                    <img src="{{ product.thumbnail }}" 
-                         alt="{{ product.name }}" 
-                         class="w-full h-full object-cover">
-                {% else %}
-                    <div class="w-full h-full flex items-center justify-center bg-gray-200">
-                        <svg class="w-32 h-32 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                {% endif %}
-                
-                {% if product.is_featured %}
-                    <div class="absolute top-6 right-6">
-                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-yellow-400 text-yellow-900 shadow-lg">
-                            ⭐ FEATURED PRODUCT
-                        </span>
-                    </div>
-                {% endif %}
+            <div id="product-image-container" class="w-full h-96 bg-gradient-to-br from-blue-100 to-red-100 relative">
+                <!-- Image will be inserted here -->
             </div>
 
             <!-- Product Info -->
             <div class="p-8">
                 <!-- Category & Brand -->
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="inline-block px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-lg">
-                        {{ product.category }}
-                    </span>
-                    {% if product.brand %}
-                        <span class="text-gray-600 font-medium">{{ product.brand }}</span>
-                    {% endif %}
+                <div id="category-brand-container" class="flex items-center gap-3 mb-4">
+                    <!-- Category and brand badges will be inserted here -->
                 </div>
 
                 <!-- Product Name -->
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                    {{ product.name }}
+                <h1 id="product-name" class="text-4xl font-bold text-gray-900 mb-4">
+                    <!-- Product name will be inserted here -->
                 </h1>
 
                 <!-- Price -->
-                <div class="text-4xl font-bold text-red-600 mb-6">
-                    Rp {{ product.price|floatformat:0 }}
+                <div id="product-price" class="text-4xl font-bold text-red-600 mb-6">
+                    <!-- Price will be inserted here -->
                 </div>
 
                 <!-- Description -->
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Deskripsi Produk</h3>
-                    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-                        {{ product.description }}
+                    <p id="product-description" class="text-gray-700 leading-relaxed whitespace-pre-line">
+                        <!-- Description will be inserted here -->
                     </p>
                 </div>
 
                 <!-- Product Details Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    {% if product.size %}
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <p class="text-sm text-gray-500 mb-1">Ukuran</p>
-                        <p class="font-semibold text-gray-900">{{ product.size }}</p>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <p class="text-sm text-gray-500 mb-1">Stok</p>
-                        <p class="font-semibold {% if product.stock > 10 %}text-green-600{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
-                            {{ product.stock }} unit
-                        </p>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <p class="text-sm text-gray-500 mb-1">Ditambahkan</p>
-                        <p class="font-semibold text-gray-900">{{ product.created_at|date:"d M Y" }}</p>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <p class="text-sm text-gray-500 mb-1">Update Terakhir</p>
-                        <p class="font-semibold text-gray-900">{{ product.updated_at|date:"d M Y" }}</p>
-                    </div>
+                <div id="product-details-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <!-- Product details will be inserted here -->
                 </div>
 
                 <!-- Action Buttons -->
-                {% if user.is_authenticated and product.user == user %}
-                <div class="flex gap-4 pt-6 border-t border-gray-200">
-                    <a href="{% url 'main:edit_product' product.id %}" 
-                       class="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-6 rounded-md transition-colors">
-                        Edit Product
-                    </a>
-                    <a href="{% url 'main:delete_product' product.id %}" 
-                       onclick="return confirm('Yakin ingin menghapus produk ini?')"
-                       class="flex-1 text-center bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
-                        Delete Product
-                    </a>
+                <div id="action-buttons" class="hidden">
+                    <!-- Action buttons will be inserted here if user is owner -->
                 </div>
-                {% endif %}
             </div>
-        </div>
+        </article>
     </div>
 </div>
+
+<script>
+// Configuration
+const PRODUCT_ID = "{{ id }}";
+const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' 0 %}`.replace('/0/', `/${PRODUCT_ID}/`);
+const EDIT_URL = `{% url 'main:edit_product' 0 %}`.replace('/0/', `/${PRODUCT_ID}/`);
+const DELETE_URL = `{% url 'main:delete_product' 0 %}`.replace('/0/', `/${PRODUCT_ID}/`);
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// DOM Elements
+const loadingState = document.getElementById('loading-state');
+const errorState = document.getElementById('error-state');
+const productContent = document.getElementById('product-content');
+const productImageContainer = document.getElementById('product-image-container');
+const categoryBrandContainer = document.getElementById('category-brand-container');
+const productName = document.getElementById('product-name');
+const productPrice = document.getElementById('product-price');
+const productDescription = document.getElementById('product-description');
+const productDetailsGrid = document.getElementById('product-details-grid');
+const actionButtons = document.getElementById('action-buttons');
+
+// Show/hide states
+function showState(state) {
+    loadingState.classList.toggle('hidden', state !== 'loading');
+    errorState.classList.toggle('hidden', state !== 'error');
+    productContent.classList.toggle('hidden', state !== 'ready');
+}
+
+// Render product content
+function renderProduct(product) {
+    // Sanitize data
+    const name = DOMPurify.sanitize(product.name);
+    const description = DOMPurify.sanitize(product.description);
+    const category = DOMPurify.sanitize(product.category);
+    const brand = product.brand ? DOMPurify.sanitize(product.brand) : '';
+    const size = product.size ? DOMPurify.sanitize(product.size) : '';
+    const thumbnail = DOMPurify.sanitize(product.thumbnail);
+    const price = DOMPurify.sanitize(product.price.toString());
+    const stock = DOMPurify.sanitize(product.stock.toString());
+    
+    // Set page title
+    document.title = `${name} - Fasilcats FC Store`;
+    
+    // Set product image
+    productImageContainer.innerHTML = '';
+    if (thumbnail) {
+        const img = document.createElement('img');
+        img.src = thumbnail;
+        img.alt = name;
+        img.className = 'w-full h-full object-cover';
+        productImageContainer.appendChild(img);
+    } else {
+        productImageContainer.innerHTML = `
+            <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                <svg class="w-32 h-32 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+        `;
+    }
+    
+    // Add featured badge if applicable
+    if (product.is_featured) {
+        const featuredBadge = document.createElement('div');
+        featuredBadge.className = 'absolute top-6 right-6';
+        featuredBadge.innerHTML = `
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-yellow-400 text-yellow-900 shadow-lg">
+                ⭐ FEATURED PRODUCT
+            </span>
+        `;
+        productImageContainer.appendChild(featuredBadge);
+    }
+    
+    // Set category and brand
+    categoryBrandContainer.innerHTML = '';
+    
+    const categoryBadge = document.createElement('span');
+    categoryBadge.className = 'inline-block px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-lg';
+    categoryBadge.textContent = category;
+    categoryBrandContainer.appendChild(categoryBadge);
+    
+    if (brand) {
+        const brandSpan = document.createElement('span');
+        brandSpan.className = 'text-gray-600 font-medium';
+        brandSpan.textContent = brand;
+        categoryBrandContainer.appendChild(brandSpan);
+    }
+    
+    // Set product name
+    productName.textContent = name;
+    
+    // Set price
+    productPrice.textContent = `Rp ${parseInt(price).toLocaleString('id-ID')}`;
+    
+    // Set description
+    productDescription.textContent = description;
+    
+    // Set product details grid
+    productDetailsGrid.innerHTML = '';
+    
+    // Size (if exists)
+    if (size) {
+        const sizeDiv = document.createElement('div');
+        sizeDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+        sizeDiv.innerHTML = `
+            <p class="text-sm text-gray-500 mb-1">Ukuran</p>
+            <p class="font-semibold text-gray-900">${size}</p>
+        `;
+        productDetailsGrid.appendChild(sizeDiv);
+    }
+    
+    // Stock
+    let stockClass = 'text-red-600';
+    if (stock > 10) stockClass = 'text-green-600';
+    else if (stock > 0) stockClass = 'text-yellow-600';
+    
+    const stockDiv = document.createElement('div');
+    stockDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+    stockDiv.innerHTML = `
+        <p class="text-sm text-gray-500 mb-1">Stok</p>
+        <p class="font-semibold ${stockClass}">${stock} unit</p>
+    `;
+    productDetailsGrid.appendChild(stockDiv);
+    
+    // Created date
+    if (product.created_at) {
+        const createdDate = new Date(product.created_at).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        const createdDiv = document.createElement('div');
+        createdDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+        createdDiv.innerHTML = `
+            <p class="text-sm text-gray-500 mb-1">Ditambahkan</p>
+            <p class="font-semibold text-gray-900">${createdDate}</p>
+        `;
+        productDetailsGrid.appendChild(createdDiv);
+    }
+    
+    // Updated date
+    if (product.updated_at) {
+        const updatedDate = new Date(product.updated_at).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        const updatedDiv = document.createElement('div');
+        updatedDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+        updatedDiv.innerHTML = `
+            <p class="text-sm text-gray-500 mb-1">Update Terakhir</p>
+            <p class="font-semibold text-gray-900">${updatedDate}</p>
+        `;
+        productDetailsGrid.appendChild(updatedDiv);
+    }
+    
+    // Action buttons (if user is owner)
+    if (CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)) {
+        actionButtons.innerHTML = `
+            <div class="flex gap-4 pt-6 border-t border-gray-200">
+                <a href="${EDIT_URL}" 
+                   class="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                    Edit Product
+                </a>
+                <a href="${DELETE_URL}" 
+                   onclick="return confirm('Yakin ingin menghapus produk ini?')"
+                   class="flex-1 text-center bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                    Delete Product
+                </a>
+            </div>
+        `;
+        actionButtons.classList.remove('hidden');
+    }
+}
+
+// Fetch product detail
+async function loadProductDetail() {
+    try {
+        showState('loading');
+        
+        const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch product detail');
+        }
+
+        const productData = await response.json();
+        renderProduct(productData);
+        showState('ready');
+    } catch (error) {
+        console.error('Error loading product detail:', error);
+        showState('error');
+    }
+}
+
+// Initialize page
+loadProductDetail();
+</script>
 {% endblock content %}

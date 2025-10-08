@@ -24,4 +24,13 @@ urlpatterns = [
     path('json/', views.show_json, name='show_json'),
     path('xml/<int:id>/', views.show_xml_by_id, name='show_xml_by_id'),
     path('json/<int:id>/', views.show_json_by_id, name='show_json_by_id'),
+
+    # AJAX endpoints for products
+    path('create-product-ajax/', views.add_product_ajax, name='add_product_ajax'),
+    path('edit-product-ajax/<int:id>/', views.edit_product_ajax, name='edit_product_ajax'),
+    path('delete-product-ajax/<int:id>/', views.delete_product_ajax, name='delete_product_ajax'),
+    
+    # AJAX endpoints for authentication
+    path('register-ajax/', views.register_ajax, name='register_ajax'),
+    path('login-ajax/', views.login_ajax, name='login_ajax'),
 ]

@@ -14,38 +14,16 @@
           <p class="text-gray-500">Create your Fasilcats FC Store account</p>
         </div>
 
-        <!-- Form Errors Display -->
-        {% if form.non_field_errors %}
-          <div class="mb-6">
-            {% for error in form.non_field_errors %}
-              <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
-                {{ error }}
-              </div>
-            {% endfor %}
+        <div id="ajax-error-display" class="mb-6 hidden">
           </div>
-        {% endif %}
-
-        {% if form.errors %}
-          <div class="mb-6">
-            {% for field, errors in form.errors.items %}
-              {% if field != '__all__' %}
-                {% for error in errors %}
-                  <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                    <strong>{{ field|title }}:</strong> {{ error }}
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% endif %}
-
-        <form method="POST" action="" class="space-y-5">
+        
+        <form id="registerForm" class="space-y-5">
           {% csrf_token %}
           
           <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+            <label for="id_username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
             <input 
-              id="username" 
+              id="id_username" 
               name="username" 
               type="text" 
               required 
@@ -54,9 +32,9 @@
           </div>
 
           <div>
-            <label for="password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label for="id_password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input 
-              id="password1" 
+              id="id_password1" 
               name="password1" 
               type="password" 
               required 
@@ -65,9 +43,9 @@
           </div>
 
           <div>
-            <label for="password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+            <label for="id_password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
             <input 
-              id="password2" 
+              id="id_password2" 
               name="password2" 
               type="password" 
               required 
@@ -77,31 +55,11 @@
 
           <button 
             type="submit" 
+            id="registerButton"
             class="w-full bg-red-600 text-white font-medium py-3 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
             Create Account
           </button>
         </form>
-
-        <!-- Messages Display -->
-        {% if messages %}
-          <div class="mt-6">
-            {% for message in messages %}
-              <div 
-                class="
-                  px-4 py-3 rounded text-sm border
-                  {% if message.tags == 'success' %}
-                    bg-green-50 border-green-200 text-green-700
-                  {% elif message.tags == 'error' %}
-                    bg-red-50 border-red-200 text-red-700
-                  {% else %}
-                    bg-gray-50 border-gray-200 text-gray-700
-                  {% endif %}
-                ">
-                {{ message }}
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
 
         <div class="mt-6 text-center">
           <p class="text-gray-500 text-sm">
@@ -115,4 +73,69 @@
     </div>
   </div>
 </div>
+
+<script>
+async function handleRegister(event) {
+    event.preventDefault();
+    const form = document.getElementById('registerForm');
+    const button = document.getElementById('registerButton');
+    const errorDisplay = document.getElementById('ajax-error-display');
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = 'Registering...';
+    errorDisplay.classList.add('hidden');
+    errorDisplay.innerHTML = '';
+
+    try {
+        const response = await fetch("{% url 'main:register_ajax' %}", {
+            method: 'POST',
+            body: new FormData(form),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showToast('Registrasi Berhasil!', 'Akun Anda telah dibuat. Silakan Login.', 'success');
+            form.reset();
+            setTimeout(() => {
+                window.location.href = "{% url 'main:login' %}";
+            }, 500);
+        } else {
+            let errorHtml = '';
+            showToast('Registrasi Gagal', 'Data yang Anda masukkan tidak valid.', 'error');
+            
+            if (data.errors) {
+                const errors = JSON.parse(data.errors);
+                for (const field in errors) {
+                    if (errors.hasOwnProperty(field)) {
+                        const fieldName = field === '__all__' ? '' : field.charAt(0).toUpperCase() + field.slice(1) + ': ';
+                        errors[field].forEach(err => {
+                            errorHtml += `<div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
+                                <strong>${fieldName}</strong> ${err.message}
+                            </div>`;
+                        });
+                    }
+                }
+            } else {
+                errorHtml = `<div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">${data.message || 'Terjadi kesalahan saat registrasi.'}</div>`;
+            }
+
+            errorDisplay.innerHTML = errorHtml;
+            errorDisplay.classList.remove('hidden');
+        }
+
+    } catch (error) {
+        errorDisplay.innerHTML = `<div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">Terjadi kesalahan koneksi.</div>`;
+        errorDisplay.classList.remove('hidden');
+        showToast('Registrasi Gagal', 'Kesalahan jaringan. Silakan coba lagi.', 'error');
+        console.error('AJAX Register Error:', error);
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+}
+
+document.getElementById('registerForm').addEventListener('submit', handleRegister);
+</script>
 {% endblock content %}
